@@ -8,6 +8,8 @@
 % Let op: kan enkel na toestemming van de bachelorproefcoördinator!
 \documentclass{hogent-article}
 
+\setlength{\parskip}{1em}
+
 % Invoegen bibliografiebestand
 \addbibresource{voorstel.bib}
 
@@ -23,11 +25,11 @@
 \academicyear{2022-2023} % TODO: pas het academiejaar aan
 
 % TODO: Werktitel
-\title{Vul hier de voorgestelde titel van je onderzoek in}
+\title{De populariteit van point-of-interests voorspellen op basis van censusdata met deep learning.}
 
 % TODO: Studentnaam en emailadres invullen
-\author{Ernst Aarden}
-\email{ernst.aarden@student.hogent.be}
+\author{Ruben Priels}
+\email{ruben.priels@student.hogent.be}
 
 % TODO: Medestudent
 % Gaat het om een bachelorproef in samenwerking met een student in een andere
@@ -36,7 +38,7 @@
 % \email{yasmine.alaoui@student.hogent.be}
 
 % TODO: Geef de co-promotor op
-\supervisor[Co-promotor]{S. Beekman (Synalco, \href{mailto:sigrid.beekman@synalco.be}{sigrid.beekman@synalco.be})}
+\supervisor[Co-promotor]{M. Roels (Accurat, \href{mailto:marten@accurat.ai}{marten@accurat.ai})}
 
 % Binnen welke specialisatierichting uit 3TI situeert dit onderzoek zich?
 % Kies uit deze lijst:
@@ -49,16 +51,24 @@
 % - Als het onderzoek niet past binnen een van deze domeinen specifieer je deze
 %   zelf
 %
-\specialisation{Mobile \& Enterprise development}
-\keywords{Scheme, World Wide Web, $\lambda$-calculus}
+\specialisation{AI \& Data Engineering}
+\keywords{POI, Deep learning, Finetuning}
 
 \begin{document}
 
 \begin{abstract}
-  Hier schrijf je de samenvatting van je voorstel, als een doorlopende tekst van één paragraaf. Let op: dit is geen inleiding, maar een samenvattende tekst van heel je voorstel met inleiding (voorstelling, kaderen thema), probleemstelling en centrale onderzoeksvraag, onderzoeksdoelstelling (wat zie je als het concrete resultaat van je bachelorproef?), voorgestelde methodologie, verwachte resultaten en meerwaarde van dit onderzoek (wat heeft de doelgroep aan het resultaat?).
+  \setlength{\parskip}{1em}
+  Bedrijven die afhankelijk zijn van fysieke locaties, zoals winkels en horecazaken, hebben vaak onvoldoende inzicht in de aantrekkelijkheid van een bepaalde locatie voor huidige en potentiële klanten. Hierdoor lopen ze het risico verkeerde beslissingen te nemen bij het openen van nieuwe vestigingen of het starten van marketingcampagnes. Dit kan leiden tot lage bezoekersaantallen en financiële schade. Dit onderzoek toont aan in welke mate artificiële intelligentie (AI) op basis van censusdata de populariteit van een point-of-interest (POI) betrouwbaar kan voorspellen. Op die manier kunnen bedrijven hun vestigingen en reclamecampagnes gerichter afstemmen op de meest veelbelovende locaties, waardoor hun marketingactiviteiten effectiever en efficiënter worden.
+  
+  Om deze onderzoeksvraag te beantwoorden wordt er nagegaan welke deep learning-modellen geschikt zijn om de populariteit van een point-of-interest te voorspellen op basis van census data. Hierbij worden onderzoekspapers bestudeerd om de voor- en nadelen van deze modellen te achterhalen. Daarnaast wordt er geanalyseerd welke technieken beschikbaar zijn voor dataverzameling. Tot slot wordt er onderzocht welke methoden ingezet kunnen worden om de prestaties van modellen te optimaliseren.
+  
+  De resultaten suggereren dat de populariteit van een POI voorspeld kan worden met de huidige bestaande deep learning-modellen. Hoewel data schaarste een uitdaging kan vormen, kan dit worden opgelost door de verschillende technieken voor dataverzameling toe te passen. De bevindingen uit deze studie hebben invloed op alle aspecten van de bedrijfswereld. Door de populariteit van een locatie te voorspellen kunnen bedrijven strategische beslissingen nemen bij een vestiging te openen of een reclamecampagne te starten. Hierdoor zullen ondernemingen meer omzet kunnen maken en startende bedrijven zullen een grotere kans hebben om te overleven.
 \end{abstract}
 
-\tableofcontents
+{
+  \setlength{\parskip}{0em}
+  \tableofcontents
+}
 
 % De hoofdtekst van het voorstel zit in een apart bestand, zodat het makkelijk
 % kan opgenomen worden in de bijlagen van de bachelorproef zelf.

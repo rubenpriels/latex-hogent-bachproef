@@ -15,23 +15,11 @@
 \section{Inleiding}%
 \label{sec:inleiding}
 
-Waarover zal je bachelorproef gaan? Introduceer het thema en zorg dat volgende zaken zeker duidelijk aanwezig zijn:
+Bedrijven zoals winkels en restaurants zijn sterk afhankelijk van een goede locatiekeuze. De populariteit van een locatie speelt namelijk een grote rol in het succes van een onderneming. Als een bedrijf zich vestigt op een locatie met lage bezoekersaantallen, dan leidt dit ook tot een lager klantenaantal en bijgevolg ook een lagere omzet. Talloze bedrijven hebben echter onvoldoende inzicht in de huidige en toekomstige populariteit van een locatie. Hierdoor nemen deze bedrijven verkeerde beslissingen bij nieuwe vestigingen te openen of reclamecampagnes te starten.
 
-\begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
-\end{itemize}
+Dit onderzoek richt zich daarom op de hoofdvraag: “Hoe kan artificiële intelligentie worden ingezet om de populariteit van een point-of-interest te voorspellen op basis van census data?" Om deze hoofdvraag te beantwoorden, wordt het onderzoek opgedeeld in drie deelvragen. Welke technieken zijn er beschikbaar voor dataverzameling? Welke deep learning-modellen zijn geschikt om POI-populariteit te voorspellen? Welke technieken bestaan er om de prestaties van zulke deep learning-modellen te verbeteren? De gewenste oplossing moet bedrijven in staat stellen om op basis van de voorspellingen een strategische locatie te kiezen voor een vestiging te openen of een marketingcampagne te starten. De oplossing moet dus technisch haalbaar zijn en een foutmarge van maximaal 10\% hebben voor voorspellingen binnen 1 jaar.
 
-Denk er aan: een typische bachelorproef is \textit{toegepast onderzoek}, wat betekent dat je start vanuit een concrete probleemsituatie in bedrijfscontext, een \textbf{casus}. Het is belangrijk om je onderwerp goed af te bakenen: je gaat voor die \textit{ene specifieke probleemsituatie} op zoek naar een goede oplossing, op basis van de huidige kennis in het vakgebied.
-
-De doelgroep moet ook concreet en duidelijk zijn, dus geen algemene of vaag gedefinieerde groepen zoals \emph{bedrijven}, \emph{developers}, \emph{Vlamingen}, enz. Je richt je in elk geval op it-professionals, een bachelorproef is geen populariserende tekst. Eén specifiek bedrijf (die te maken hebben met een concrete probleemsituatie) is dus beter dan \emph{bedrijven} in het algemeen.
-
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
-
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
-
+\bigskip
 %---------- Stand van zaken ---------------------------------------------------
 
 \section{Literatuurstudie}%
@@ -56,21 +44,37 @@ Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle no
 
 Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur van de tekst kan verduidelijken.
 
+\clearpage
 %---------- Methodologie ------------------------------------------------------
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Hier beschrijf je hoe je van plan bent het onderzoek te voeren. Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
+\paragraph{Fase 1: Literatuurstudie.}
+Het doel van de eerste fase is om een inzicht te krijgen in bestaande deep learning-modellen en technieken voor dataverzameling en model optimalisatie. Daarnaast worden de specifieke voorwaarden opgesteld van het deep learning-model dat voldaan moet zijn om de oplossing als een succes te beschouwen. Hiervoor wordt een literatuuronderzoek uitgevoerd naar verschillende onderzoekspapers om geschikte deep learning-modellen te identificeren zoals MLP die tot een mogelijke oplossing kunnen leiden. Deze papers behandelen zowel real-world use cases waar deze modellen gebruikt worden als reviews over de architectuur van specifieke modellen zoals transformers. Aan het einde van deze fase is een uitgebreide documentatie van mogelijke deep learning-modellen en technieken voor dataverzameling en model optimalisatie opgesteld. Daarnaast is de maximale voorspellingsfout en modelnauwkeurigheid duidelijk afgebakend. De maximale voorspellingsfout geeft aan hoeveel de voorspellingen maximaal mogen afwijken van de werkelijke waarden en de modelnauwkeurigheid geeft aan hoe goed het model de variatie in de data verklaart. De literatuurstudie vindt plaats twee dagen per week over een periode van zeven weken. Er wordt verwacht dat deze deliverables afgewerkt zijn op 23 maart.
 
-Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
+\paragraph{Fase 2: Data verzamelen.}
+Het doel van de tweede fase is om voldoende diverse data te verzamelen om de deep learning-modellen mee te trainen in de volgende fase. Hierbij worden zowel openbare datasets als door bedrijf aangeleverde datasets gebruikt. Daarnaast worden technieken uit de eerste fase toegepast om data schaarste tegen te gaan zoals synthetische data en x. Aan het einde van deze fase is er een dataset beschikbaar van censusdata waarmee de deep learning-modellen uit de volgende fase mee getraind kunnen worden. Deze fase vindt plaats twee dagen per week over een periode van vijf weken. Er wordt verwacht dat deze deliverables afgewerkt zijn op 6 april.
 
-Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
+\paragraph{Fase 3: deep learning-model implementatie.}
+Het doel van de derde fase is om deep learning-modellen te implementeren op basis van de bevindingen uit de literatuurstudie. Deze modellen kunnen op basis van censusdata de populariteit van een POI voorspellen. Eerst worden de standaard deep learning-modellen geprogrammeerd die in fase 1 zijn onderzocht. Vervolgens worden deze modellen geoptimaliseerd door de in de literatuurstudie beschreven technieken voor model optimalisatie toe te passen. Deze deep learning-modellen worden getraind op de dataset uit de vorige fase. Aan het einde van deze fase zijn werkende deep learning-modellen ontwikkeld op basis van de literatuurstudie. Deze kunnen de populariteit van een POI voorspellen. De implementatie van de deep learning-modellen vindt plaats twee dagen per week over een periode van vijf weken. Er wordt verwacht dat deze deliverables afgewerkt zijn op 13 april.
 
-Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
+\paragraph{Fase 4: Experimenten uitvoeren.}
+Het doel van de vierde fase is om de deep learning-modellen te testen door middel van experimenten. Alle deep learning-modellen die zijn ontwikkeld tijdens de Proof of Concept zullen dezelfde experimenten ondergaan. Ze worden geëvalueerd aan de hand van verschillende prestatiemaatstaven waaronder RMSE, MAE en R². De experimenten omvatten voorspellingen op diverse scenario's zoals reguliere gevallen, situaties met beperkte data, tijdsperiodes met evenementen op een specifieke locatie en feestdagen. Aan het einde van deze fase is elk deep learning-model geëvalueerd, wat resulteert in een gedetailleerd rapport van hun prestaties. Deze experimenten vinden plaats twee dagen per week over een periode van vier weken. Er wordt verwacht dat deze deliverables afgewerkt zijn op 27 april.
 
-Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
+\paragraph{Fase 5: Evaluatie van deep learning-modellen.}
+In de laatste fase worden de prestaties van de verschillende deep learning-modellen geëvalueerd voor gebruik in real world cases waarbij bedrijven een locatie kunnen kiezen aan de hand van deze voorspellingen. De resultaten uit de vorige fase worden zowel individueel geanalyseerd als vergeleken met de resultaten van de andere deep learning-modellen. Hierdoor wordt nagegaan welke modellen beter zijn in specifieke situaties, maar ook welk model in het algemeen het beste presteert op de vooraf gedefinieerde criteria. De deliverables van deze fase is een uitgebreide rapportage waarin alle deep learning-modellen worden geanalyseerd op basis van de vooraf gedefinieerde criteria en hoe ze presteren ten opzichte van andere modellen. Hieruit wordt geconcludeerd welk deep learning-model het meest geschikt is om de populariteit van POI’s te voorspellen en of deze daadwerkelijk voldoet aan de vereisten die in fase 1 werden vastgelegd. Tot slot worden mogelijke beperkingen gedocumenteerd zoals slechtere prestaties bij uitzonderlijke situaties samen met aanbevelingen voor verbeteringen. De evaluatie van de deep learning-modellen vindt plaats twee dagen per week over een periode van drie weken. Er wordt verwacht dat deze deliverables afgewerkt zijn op 18 mei.
 
-Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{img/Gantt_diagram.png}
+  \caption{\label{fig:gantt}Gantt diagram met de verschillende fasen en milestones van de bachelorproef.}
+\end{figure*}
+
+% \begin{figure*}
+%     \centering
+%     \includegraphics[width=\textwidth]{img/Gantt_diagram.png}
+%     \caption{\label{fig:gantt}Gantt diagram met de verschillende fasen en milestones van de bachelorproef.}
+% \end{figure*}
 
 %---------- Verwachte resultaten ----------------------------------------------
 \section{Verwacht resultaat, conclusie}%
