@@ -1,0 +1,178 @@
+\chapter{\IfLanguageName{dutch}{Proof of concept}{Proof of concept}}%
+\label{ch:proof-of-concept}
+
+\section{Features}
+Bij het trainen van de neurale netwerken zijn beslissingen gemaakt omtrent de censusdata variabelen die gebruikt zouden worden om de bezoekersaantallen van een POI  te voorspellen.
+
+\paragraph{Aantal vrouwelijke en mannelijke populatie}
+Het onderscheid tussen de vrouwelijke en mannelijke populatie is relevant, aangezien bepaalde POI’s een geslachtsgerelateerde bias in bezoekgedrag kunnen vertonen. Cosmetica winkels, kapsalons en modezaken zullen meer vrouwelijke bezoekers aantrekken. Aan de andere kant zullen bouwmarkten en sportwinkels meer mannelijke bezoekers aantrekken. Door geslacht op te nemen als een feature, kunnen de neurale netwerken geslachtsspecifieke voorkeuren beter identificeren en de voorspellende nauwkeurigheid verbeteren.
+
+\paragraph{Totale populatie}
+De totale populatie is een van de belangrijkste voorspellende variabelen. Naarmate de populatie rond een specifieke POI stijgt, neemt de kans toe dat de bezoekersaantallen voor die specifieke POI zullen stijgen. Hierbij beschikt een POI in een dichtbevolkt stedelijk gebied over een groter aantal potentiële klanten dan een vergelijkbare onderneming in een regio waar de populatie lager ligt. 
+
+\paragraph{Inkomen}
+Het inkomensniveau heeft invloed op de koopkracht en het bestedingsgedrag van huishoudens. Naarmate de koopkracht toeneemt, beschikken personen over meer mogelijkheden om POI's te bezoeken, bijvoorbeeld regelmatig boodschappen doen of horeca bezoeken. Daarnaast zijn personen met een hoger inkomen meer geneigd om luxere POI’s te bezoeken zoals restaurants, terwijl personen met een lager inkomen gebruikmaken van minder luxere POI’s zoals discountsupermarkten. Het opnemen van inkomensgegevens stelt de neurale netwerken in staat om verschillende soorten POI’s te onderscheiden en de bezoekersaantallen van een POI nauwkeuriger te voorspellen.
+
+\paragraph{Opleidingsniveau}
+Opleidingsniveau correleert sterk met inkomen aangezien een hoger opgeleiden vaak een hoger loon verdient. Daarnaast vertonen hoger opgeleiden vaak afwijkende patronen in hun vrijetijdsbesteding, zoals museumbezoeken en sportschoolabonnementen. De ondernemingen die zich richten op deze activiteiten zullen ook frequenter bezocht worden wanneer hoger opgeleiden zich rond deze POI’s bevinden.
+
+\paragraph{Leeftijdsverdeling}
+Leeftijd is een cruciale factor om te bepalen welke POI’s frequenter bezocht worden dan andere POI’s. Huishoudens met kinderen onder de vijf jaar zijn meer geneigd om kinderopvangen en speelgoedwinkels te bezoeken. Hierbij zullen de kinderen niet opgenomen worden in de dataset, maar de ouders die de kinderen superviseren aangezien kinderen onder vijf jaar zelden over een elektronisch apparaat beschikken en locatie toestemming hebben verleend. Aan de andere kant zullen jongvolwassenen frequenter cafés, fastfoodketens en discountsupermarkten bezoeken. Verder zullen personen boven 70 jaar vaker apotheken, zorginstellingen en tuincentra bezoeken. Door de leeftijdsverdeling van een regio op te nemen in de dataset, kunnen de neurale netwerken beter inschatten in welke mate specifieke soorten POI’s een groter aantal bezoekers zullen aantrekken.
+
+\paragraph{Gezinsgrootte}
+Gezinsgrootte beïnvloedt de samenstelling van huishoudens zoals het aantal gezinsleden en de aanwezigheid van kinderen. Grotere huishoudens hebben een grotere kans om gezinsgerichte POI’s te bezoeken in tegenstelling tot kleinere huishoudens. Daarnaast is de kans groter dat grotere gezinnen samen een POI bezoeken, resulterend in hogere bezoekersaantallen.
+
+\section{Dataset opstellen}
+Tijdens het samenstellen van de dataset is ervoor gezorgd dat alle data consistent en betrouwbaar is voor het trainen van de neurale netwerken. Tijdens het verzamelen van de data zijn de POI’s gefilterd die ongeschikt zijn om een model mee te trainen. Elke POI in de database bevat de variabelen is\_active en is\_deleted. is\_active geeft aan of een POI in staat is om klanten te ontvangen binnen een specifieke tijdsperiode bv. festivals zijn enkel is\_active = 1 gedurende de periode dat het festival plaatsvindt. is\_deleted geeft aan of een POI bestaat bv. een POI sluit als gevolg van onvoldoende omzet. De POI’s die tussen de periode van 1 januari 2025 tot 31 maart 2026 de status is\_deleted = 1 of is\_active = 0 hadden, zijn uit de dataset gefilterd. Op deze manier wordt voorkomen dat ontbrekende rijen in de dataset ontstaan of de tijdreeks onverwacht eindigt als gevolg van de inactiviteit of verwijdering van een POI.
+
+Daarnaast is gecontroleerd of de polygonen die bepalen of een bezoeker zich binnen een POI bevindt voor 1 januari 2025 bestonden. In het geval dat een polygoon na deze datum is aangemaakt, wordt aangenomen dat de sequentie ontbrekende records bevat. Dit vormt een significant probleem voor de RNN en transformers die afhankelijk zijn van consistente tijdreeksen. Onderbrekingen of sprongen in deze sequenties kunnen leiden tot onnauwkeurigheden bij het modelleren van tijdsafhankelijke relaties.
+
+Verder is rekening gehouden met de kwaliteit van polygonen. In sommige gevallen kan een polygoon automatisch genereren door middel van OSM. Hierbij ontstaat de kans dat de polygoon onnauwkeurig de oppervlakte van de POI representeert, wat resulteert in skewed bezoekersaantallen. Indien dit wordt vastgesteld, past Accurat de polygoon handmatig aan. Wanneer een POI wordt aangepast, komt er een record in de database te staan die aangeeft wanneer deze wijziging is toegebracht aan die specifieke POI. Alle POI’s waarbij de wijziging na 1 januari 2025 heeft plaatsgevonden, zijn uit de dataset gefilterd. Dit garandeert dat de geregistreerde bezoekersaantallen representatief en consistent blijven. Wanneer de vorm van een polygoon verandert, kunnen de bezoekersaantallen significant afwijken van de periode voor de wijziging. Door deze filters toe te passen, worden alleen consistente en betrouwbare POIs in de dataset behouden.
+
+\section{Hyperparameter tuning}
+Tijdens het trainen van de neurale netwerken zijn twee technieken voor hyperparameter tuning ingezet. Bij Bayesian optimization en Hyperband zijn telkens dezelfde zoekruimtes gedefinieerd om te ondervinden welke hyperparameter tuning techniek het meest effectief is om de beste hyperparameters te vinden op de gegeven dataset. \\
+
+RNN en MLP:
+
+\begin{itemize}
+    \item Aantal lagen: 2-10
+    \item Aantal neuronen: 32-512
+    \item Activatiefunctie: relu, softplus, tanh
+    \item Learning rate: 0.00001, 0.0001, 0.001, 0.01
+\end{itemize}
+
+Transformer:
+
+\begin{itemize}
+    \item Aantal lagen: 1-6
+    \item Dropout rate: 0.1, 0.2, 0.3, 0.4, 0.5
+    \item Aantal heads: 2, 4, 8, 16
+    \item Feedforward dimensies: 64, 128, 256, 512
+    \item Learning rate: 0.00001, 0.0001, 0.001, 0.01
+\end{itemize}
+
+\subsection{Python-omgeving en gebruikte bibliotheken}
+
+Voor de POC is gebruik gemaakt van \textbf{Python 3.10.11}. 
+
+De belangrijkste libraries en hun doel zijn weergegeven in tabel~\ref{tab:python-libraries}.
+
+\begin{table}[H]
+    \centering
+    \caption{Gebruikte python-libraries in de POC}
+    \label{tab:python-libraries}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Library} & \textbf{Doel} \\
+        \midrule
+        numpy & Data preprocessing \\
+        pandas & Data manipulatie in dataframes \\
+        shapely & Points in stringvorm omzetten naar geografische data \\
+        geopandas & Censusdata linken aan POI's \\
+        scikit-learn & Data preprocessing en evaluatiemetrics \\
+        Keras & Bouwen en trainen van neurale netwerken \\
+        KerasTuner & Hyperparameter optimalisatie (Bayesian Optimization en Hyperband) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Resultaten}
+In deze proof of concept zijn drie deep learning-modellen uitgebreid getest voor het voorspellen van de populariteit van POI’s: een MLP, een RNN en een transformer. Deze modellen zijn geoptimaliseerd met behulp van Bayesian Optimization en Hyperband. Voor elk model zijn twee afzonderlijke experimenten uitgevoerd, namelijk op reguliere dagen en op feestdagen. De evaluatie gebeurt aan de hand van MAE, RMSE en R². MAE is de absolute gemiddelde voorspelfout van het aantal bezoekers en RMSE is de vierkantswortel van de gemiddelde gekwadrateerde voorspelfout waardoor grotere afwijkingen zwaarder worden bestraft. R² geeft aan in welke mate de variantie in de bezoekersaantallen wordt verklaard door het model.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        MLP (BO) & 124,61 & 171,40 & 0,46  \\ \hline
+        MLP (Hyperband) & 123,96  & 169,46 & 0,47  \\ \hline
+        RNN (BO) & 113,29  & 153,63 & 0,51 \\ \hline
+        RNN (Hyperband) & 112,77  & 153,34 & 0,52  \\ \hline
+        Transformer (BO) & 105,12  & 144,56 & 0,55  \\ \hline
+        Transformer (Hyperband) & 106,43  & 160,91 & 0,55  \\ \hline
+    \end{tabular}
+    \caption{Prestaties van neurale netwerken}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        MLP (BO) normaal & 109,03 & 146,23 & 0,58 \\ \hline
+        MLP (BO) feestdagen & 155,49  & 214,18 & 0,36  \\ \hline
+        MLP (Hyperband) normaal & 110.41 & 147.13 & 0,58  \\ \hline
+        MLP (Hyperband) feestdagen & 155,47 & 212,36 & 0,37 \\ \hline
+    \end{tabular}
+    \caption{MLP experimenten}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        RNN (BO) normaal & 99,84  & 135,71 & 0,61  \\ \hline
+        RNN (BO) feestdagen & 146,92  & 201,38 & 0,40  \\ \hline
+        RNN (Hyperband) normaal & 99,12  & 134,96 & 0,62   \\ \hline
+        RNN (Hyperband) feestdagen & 145,77  & 199,84 & 0,41  \\ \hline
+    \end{tabular}
+    \caption{RNN experimenten}
+\end{table}
+
+Op reguliere dagen presteert de RNN duidelijk beter dan de MLP. Het RNN heeft een MAE van 99,12 bezoekers ten opzichte van 109,3 bij de MLP en een RMSE van 134,96 tegenover 146,23. Het RNN kan de dagelijkse en seizoensgebonden patronen in de bezoekersaantallen beter identificeren aangezien het temporele afhankelijkheden expliciet kan modelleren in tegenstelling tot de MLP. Verder verklaart het RNN een groter deel van de variantie in de bezoekersaantallen dan de MLP met een R² van 0,62 tegenover 0,58.
+
+Wanneer er gekeken wordt naar uitzonderlijke situaties (feestdagen) blijft de RNN performanter ten opzichte van de MLP. Op de testdata van 488 uitzonderlijke dagen behaalde de RNN een MAE van 145,77 en een RMSE van 199,84 in tegenstelling tot de MLP met een MAE van 155,47 en de RMSE van 212,36. Het RNN presteert in het algemeen beter in deze uitzonderlijke gevallen. Bovendien legt het RNN een groter deel van de variantie in de bezoekersaantallen voor feestdagen uit dan de MLP met een R² van 0,41 tegenover 0,37.
+
+Naast de MLP en RNN is ook een Transformer geëvalueerd voor het voorspellen van de populariteit van een POI. In tegenstelling tot de RNN leert de Transformer door middel van self-attention welke historische tijdstappen het meest relevant zijn voor de voorspellingen. Daarnaast kunnen Transformers niet alleen korte tijdsafhankelijke relaties in de data modelleren, maar ook lange tijdsafhankelijke relaties. Op deze manier kan de Transformer vaste patronen modelleren zoals seizoensinvloeden, wekelijkse patronen en terugkerende evenementen.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        Transformer (BO) normaal & 91.37 & 126.42 & 0.66  \\ \hline
+        Transformer (BO) feestdagen & 138.84 & 191.53 & 0.45  \\ \hline
+        Transformer (Hyperband) normaal & 92.95 & 128.11 & 0.65  \\ \hline
+        Transformer (Hyperband) feestdagen & 141.62 & 205.74 & 0.43 \\ \hline
+    \end{tabular}
+    \caption{Transformer experimenten}
+\end{table}
+
+Op reguliere dagen presteert de Transformer beter dan de RNN. De Transformer behaalt een MAE van 91,37 bezoekers ten opzichte van het RNN met een MAE van 99,12 en een RMSE van 126,42 tegenover 134,96. De Transformer kan de dagelijkse en seizoensgebonden patronen in de bezoekersaantallen beter identificeren aangezien het attention-mechanisme temporele afhankelijkheden op korte en lange termijnen efficiënter kan modelleren in tegenstelling tot de RNN. Hierbij verklaart de Transformer significant meer van de variantie in de bezoekersaantallen dan het RNN met een R² van 0,66 in vergelijking met 0,62.
+
+Verder presteert de Transformer beter in het voorspellen van de bezoekersaantallen op de feestdagen in vergelijking met de RNN. Op de feestdagen behaalde de Transformer een MAE van 138,84 en een RMSE van 191,53 in tegenstelling tot de RNN met een MAE van 145,77 en een RMSE van 199,84. De transformer legt ook op feestdagen een groter aandeel van de variantie uit dan de RNN met een R² van 0,45 ten opzichte van 0,41.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        RNN (BO) kort & 111,21  & 150,01 & 0,53  \\ \hline
+        RNN (BO) midden & 113,29  & 154,15 & 0,51  \\ \hline
+        RNN (BO) lang & 114,85  & 156,23 & 0,51  \\ \hline
+        RNN (Hyperband) kort & 111,2  & 149,72 & 0,53  \\ \hline
+        RNN (Hyperband) midden & 113,29  & 153,86 & 0,51  \\ \hline
+        RNN (Hyperband) lang & 113,82  & 154,89 & 0,51  \\ \hline
+        Transformer (BO) kort & 103,08  & 141,29 & 0.57  \\ \hline
+        Transformer (BO) midden & 106,02  & 145,08 & 0.56 \\ \hline
+        Transformer (BO) lang & 106,47  & 147,03 & 0.55  \\ \hline
+        Transformer (Hyperband) kort & 105,07  & 157,19 & 0,56  \\ \hline
+        Transformer (Hyperband) midden & 106,81  & 161,39 & 0,55  \\ \hline
+        Transformer (Hyperband) lang & 107,41  & 162,49 & 0,54  \\ \hline
+    \end{tabular}
+    \caption{Termijn experimenten}
+\end{table}
+Naast de onderlinge vergelijking tussen de reguliere dagen en feestdagen is er ook onderzocht hoe de modellen presteren bij verschillende voorspellingshorizonten. Op korte termijn presteert de Transformer beter dan de RNN. De Transformer behaalt een MAE van 103,08 bezoekers ten opzichte van de RNN met een MAE van 111,20. Bovendien behaalt de Transformer een RMSE van 141,29 tegenover 149,72. Daarnaast ligt ook de R² hoger bij de Transformer met 0,57 ten opzichte van 0,53 bij de RNN. Dit toont aan dat de Transformer beter in staat is om patronen op korte termijn te modelleren.
+
+Hoewel de prestaties van de Transformers ook beter is op middelange termijn, nemen de prestaties van beide modellen af. De Transformer behaalt een MAE van 106,02 en een RMSE van 145,08, terwijl de RNN een MAE van 113,29 en een RMSE van 153,86 behaalt. De Transformer behoudt een hogere R² met 0,56 ten opzichte van 0,51.
+
+Op lange termijn neemt de performantie van de RNN en Transformer verder af, maar de Transformer blijft beter presteren dan de RNN. De Transformer behaalt een MAE van 106,47 en een RMSE van 147,03 in tegenstelling tot de RNN met een MAE van 113,82 en een RMSE van 154,89. Tot slot ligt de R² van de Transformer hoger met een 0.55 in tegenstelling tot tot de RNN met een R² van 0.51
+
+Op basis van deze resultaten wordt geconcludeerd dat de Transformer het meest geschikte neurale netwerk is voor het voorspellen van de populariteit van een POI. De Transformer presteert  het beste op zowel de reguliere als uitzonderlijke dagen waarbij de MAE en RMSE lager liggen.
+
+\section{Beperkingen}
+De neurale netwerken bevatten enkele beperkingen. De modellen presteren minder goed bij uitzonderlijke situaties die niet goed vertegenwoordigd zijn in de trainingsdata. Verder wordt het moeilijker om de bezoekersaantallen van POI’s met lage bezoekersaantallen nauwkeuriger te voorspellen aangezien een kleine afwijking bij een hoog bezoekersaantal minder impactvol is dan een kleine afwijking bij een laag bezoekersaantal. Verder blijven de neurale netwerken black-box modellen waardoor het moeilijk is om afwijkingen in de voorspellingen te verklaren. Daarnaast zijn de modellen gevoelig voor een gebrek aan historische data. De neurale netwerken leren correlaties tussen de features en de voorspelde waarde. Hierdoor worden relaties die niet in de features worden verwerkt, mogelijk niet door het model ontdekt.
+
+\section{Aanbevelingen}
+Om deze beperkingen te minimaliseren, kunnen expliciete features worden toegevoegd die uitzonderlijke gevallen beter kunnen modelleren. Daarnaast kan een pipeline worden ontwikkeld waarbinnen de openingstijden van een POI worden geanalyseerd. De halve dagen waarbij de bezoekersaantallen meer dan 80\% van de volledige dagen zijn, worden automatisch bijgestuurd. Verder kunnen belangrijke POI’s afzonderlijk worden getraind, terwijl voor kleine of minder populaire POI’s specifieke modellen of aanpassingen worden ontwikkeld die lagere bezoekersaantallen voorspellen. Tot slot kan het model elke maand hertraind worden. Op deze manier blijven de voorspellingen nauwkeurig naarmate de tijd vordert. Verder kunnen de neurale netwerken beter presteren door de grotere hoeveelheid nieuwe data.

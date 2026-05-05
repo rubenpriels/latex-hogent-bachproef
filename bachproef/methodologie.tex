@@ -26,5 +26,56 @@
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
 
-\lipsum[21-25]
+% \lipsum[21-25]
 
+\section{Dataverzameling}
+
+Voordat neurale netwerken getraind kunnen worden, is er nood aan voldoende
+diverse data om deze modellen mee te trainen in de volgende fase. Hierbij wordt
+gebruikgemaakt van data die door het bedrijf Accurat is aangeleverd. De dataset
+bestaat uit censusdata die demografische en socio-economische kenmerken van
+een regio beschrijven. Verder worden er temporele features gebruikt om veranderingen in de tijd beter te modelleren. De censusdata die wordt gebruikt om de bezoekersaantallen van een POI te voorspellen bestaat uit de volgende features:
+
+\begin{itemize}
+    \item inkomen
+    \item opleidingsniveau
+    \item populatiegrootte
+    \item leeftijdsverdeling
+    \item gezinsgrootte
+\end{itemize}
+
+Elke POI bestaat uit een geografisch punt weergegeven door de lengtegraad en breedtegraad. Dit geografisch punt is bepaald via scraping van OSM of door handmatige invoer. Om de censusdata aan een POI te koppelen, wordt een straal van 5km rond elke POI getrokken. Alle censusdata die binnen deze straal vallen, worden gekoppeld aan de POI. Er wordt verondersteld dat de kans dat mensen een POI bezoeken toeneemt naarmate hun woonplaats dichter bij die POI ligt. Een straal van 5km wordt beschouwd als een realistische afstand waarbinnen de mensen zich regelmatig verplaatsen voor dagelijkse voorzieningen. Binnen deze afstand kunnen verplaatsingen doorgaans te voet, met de fiets of via een korte autorit worden afgelegd.
+
+Verder is data verzameld die de populariteit van POI's uitdrukken. Deze populariteit wordt gemeten aan de hand van het aantal personen die zich binnen een specifieke POI bevindt per dag. Voor elke POI is een tijdreeks opgebouwd waarin per dag het totale bezoekersaantal wordt weergegeven. Deze dataset is voorbereid zodat ze consistent en betrouwbaar is om modellen mee te trainen.
+
+In totaal bevat de dataset 55266 bezoekersaantal records, waarvan 44530 records (80.6\%) van 1 januari 2025 tot 31 december 2025 komen en 10736 records (19.4\%) die van 1 januari 2026 tot 29 maart 2026 afkomstig zijn.
+
+\section{Neurale netwerk implementatie}
+
+Het doel van de model implementatiefase is om drie verschillende type neurale netwerken te ontwikkelen die op basis van censusdata de bezoekersaantallen van een POI kunnen voorspellen. De modellen worden getraind door middel van supervised learning. Hierbij wordt de censusdata uit de vorige fase gebruikt als input en de bezoekersaantallen gebruikt als target.
+
+Ten eerste is een MLP model geïmplementeerd om complexe relaties in de data te modelleren terwijl het relatief eenvoudig te implementeren is. Verder is een RNN ontwikkeld om tijdsafhankelijke patronen op korte termijn te ontdekken. Tot slot zijn transformers ingezet om langetermijnrelaties in de data te detecteren.
+
+Verder zijn deze drie neurale netwerken geoptimaliseerd door bayesian optimization en hyperband toe te passen. Hierbij zijn de best presterende hyperparameter combinaties voor elk model geïdentificeerd. Aan het einde van deze fase zijn in totaal zes modellen ontwikkeld die geëvalueerd zullen worden aan de hand van experimenten.
+
+De dataset is chronologisch opgesplitst in trainings-, validatie- en testdata. Hierbij wordt de data van 2025-01-01 tot 2025-10-15 gebruikt als trainingsdata, van 2025-10-15 tot 2025-11-30 als validatiedata en van 2025-12-01 tot 2026-03-31 als testdata. Op deze manier kunnen de neurale netwerken de bezoekersaantallen van een POI voorspellen, gebaseerd op historische data.
+
+\section{Experimenten uitvoeren.}
+Nadat de modellen ontwikkeld zijn, worden ze geëvalueerd door diverse experimenten uit te voeren. De modellen worden getest in twee duidelijk gedefinieerde scenario's. Het eerste scenario zijn de reguliere gevallen. Dit zijn tijdsperiodes zonder uitzonderlijke gebeurtenissen waarbij de bezoekersaantallen niet afwijken van de gebruikelijke bezoekers patronen. Het tweede scenario omvat de feestdagen in België. Hierbij wordt rekening gehouden met officiële feestdagen zoals kerstmis omdat deze tijdsperiodes vaak resulteren in afwijkende bezoekersaantallen.
+
+Voor elk scenario worden voorspellingen gemaakt op basis van historische censusdata en bezoekersdata. De modellen krijgen als input gegevens tot een specifiek tijdstip. Vervolgens voorspellen de neurale netwerken het aantal bezoekers tussen twee voorafgedefineerde periodes. Op deze manier wordt onderzocht hoe de model prestaties evolueren naarmate de voorspellingen verder in de toekomst liggen. Er wordt op korte-, middellange- en lange termijn getest.
+
+\begin{itemize}
+    \item korte termijn: tot 1 week in de toekomst
+    \item middellange termijn: tussen 1 en 3 weken in de toekomst
+    \item lange termijn: tussen 3 weken en 1 maand in de toekomst
+\end{itemize}
+
+Hierbij worden de modellen geëvalueerd aan de hand van verschillende prestatiemaatstaven waaronder root mean squared error (RMSE), mean absolute error (MAE) en de determinatiecoëfficiënt (R²). Aan het einde van deze fase is elk neuraal netwerk geëvalueerd op basis van deze maatstaven. Dit resulteert in een gedetailleerd rapport van elke model prestatie.
+
+\section{Evaluatie van de neurale netwerken.}
+In de laatste fase worden de prestaties van de diverse neurale netwerken geëvalueerd voor gebruik in real world cases waarbij ondernemingen locatie- en aankoop keuzes kunnen maken aan de hand van voorspellingen. De resultaten uit de experimenten worden zowel individueel geanalyseerd als vergeleken met de andere neurale netwerken. 
+
+Het best presterende model wordt gedefinieerd als het model met de kleinste MAE en RMSE en de grootste R². Voor elk neuraal netwerk wordt de score van deze maatstaven individueel geanalyseerd en met de andere modellen aangezien de mogelijkheid bestaat dat een model een lagere MAE behaalt dan een ander model, maar tegelijkertijd een hogere RMSE vertoont. In deze gevallen wordt toegelicht wat de mogelijke oorzaken zijn. Op deze manier wordt nagegaan welk model in het algemeen het beste presteert, maar ook welke modellen beter zijn in specifieke situaties zoals op feestdagen.
+
+Daarnaast wordt een onderscheid gemaakt tussen korte- en langetermijnvoorspellingen, om te bepalen welke modellen het meest geschikt zijn voor verschillende voorspellingshorizonten. Uit deze rapportage wordt geconcludeerd welk neuraal netwerk het meest geschikt is om de bezoekersaantallen van een POI te voorspellen en in welke mate dit model voldoet aan de vooropgestelde criteria. Tot slot zijn de beperkingen van de modellen gedocumenteerd zoals slechtere prestaties bij uitzonderlijke situaties en zijn aanbevelingen geformuleerd voor toekomstige verbeteringen van de modellen.

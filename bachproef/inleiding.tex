@@ -5,32 +5,55 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+%De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+%\begin{itemize}
+%  \item context, achtergrond
+%  \item afbakenen van het onderwerp
+%  \item verantwoording van het onderwerp, methodologie
+%  \item probleemstelling
+%  \item onderzoeksdoelstelling
+%  \item onderzoeksvraag
+%  \item \ldots
+%\end{itemize}
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+%Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+
+Bedrijven die afhankelijk zijn van fysieke locaties beschikken vaak over onvoldoende inzicht in de aantrekkelijkheid van een locatie voor zowel huidige als potentiële klanten. De populariteit van een locatie vormt nochtans een cruciale factor in het succes van een onderneming. Wanneer een onderneming zich vestigt op een locatie met lage bezoekersaantallen, leidt dit tot een lager klantenaantal en bijgevolg een lagere omzet. Talloze bedrijven hebben echter onvoldoende inzicht in de huidige en toekomstige populariteit van locaties. Dit kan leiden tot verkeerde beslissingen bij het openen van nieuwe vestigingen.
+
+Daarnaast kan een onvoldoende inzicht in de populariteit van een POI leiden tot foutieve inkoopbeslissingen, met als gevolg hoge voorraadkosten en verspilling of gemiste verkopen. Door een beter inzicht te krijgen in de toekomstige populariteit van locaties kunnen ondernemingen niet alleen strategische beslissingen nemen bij het openen van nieuwe vestigingen, maar ook nauwkeuriger inschatten hoeveel goederen aangekocht moeten worden voor bestaande POI’s. Op deze manier minimaliseren ondernemingen voorraadrisico’s en kan winst geoptimaliseerd worden door over- of onder bevoorrading te vermijden.
+
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+%Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+
+Om dit probleem aan te pakken, richt deze studie zich op de onderzoeksvraag: “Hoe kan artificiële intelligentie worden ingezet om de populariteit van een point-of-interest te voorspellen op basis van census data?” Om deze onderzoeksvraag te beantwoorden, wordt het onderzoek opgesplitst in deelvragen.
+
+\subsection{Wat betekent de populariteit van een POI en hoe kan deze gemeten worden?}
+In deze deelvraag wordt de populariteit van een POI gedefinieerd en wordt toegelicht op welke manier deze binnen deze studie wordt gemeten.
+
+\subsection{Hoe wordt de populariteit van een POI verklaard door censusdata?}
+Deze deelvraag onderzoekt welke variabelen uit censusdata een invloed hebben op het aantal bezoekers van een POI. Hierbij wordt aandacht besteed aan factoren zoals bevolkingsdichtheid en werkgelegenheid. Het doel is om relevante variabelen te identificeren die gebruikt kunnen worden bij het trainen van het neurale netwerk.
+
+\subsection{Welke neurale netwerken zijn geschikt om POI-populariteit te voorspellen?}
+In deze deelvraag worden verschillende zelf getrainde neurale netwerken geanalyseerd en met elkaar vergeleken op basis van hun belangrijkste voor- en nadelen, architectuur en verwachte prestaties op de gebruikte dataset.
+
+\subsection{Welke technieken bestaan er om de prestaties van neurale netwerken te verbeteren?}
+Deze deelvraag bespreekt verschillende optimalisatietechnieken die kunnen worden toegepast om de prestaties van neurale netwerken te verbeteren. Door deze methoden toe te passen, kunnen modellen beter leren van de beschikbare data, waardoor hun voorspellingen nauwkeuriger worden.
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+%Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+
+Het doel van deze bachelorproef is het ontwikkelen en evalueren van een proof of concept waarbij deep learning wordt gebruikt om de populariteit van een POI te voorspellen op basis van censusdata. Bedrijven moeten in staat zijn om op basis van deze voorspellingen onderbouwde strategische beslissingen te nemen zoals het openen van een nieuwe vestiging in een specifieke locatie of het aankopen van goederen.
+Een model wordt als succesvol beschouwd wanneer het in staat is om de bezoekersaantallen van een POI tot 1 maand in de toekomst te voorspellen met een maximale gemiddelde foutmarge van 20\%. Deze foutmarge biedt voldoende ruimte voor onzekerheden, terwijl ze beperkt genoeg blijft om betrouwbare strategische beslissingen te ondersteunen. Dit laat bedrijven toe om niet alleen korte termijn beslissingen te nemen, maar ook om plannen op lange termijn op te stellen.
+Daarnaast wordt onderzocht in welke mate het model in staat is om voorspellingen te maken over 1 maand in de toekomst, terwijl de foutmarge onder de 20\% blijft. Wat zijn de mogelijke implicaties voor bedrijven en in welke mate zou een bedrijf beter beslissingen kunnen nemen?
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -46,5 +69,7 @@ In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand v
 In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
 
 % TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+
+In Hoofdstuk~\ref{ch:proof-of-concept} wordt de ontwikkelde proof of concept in detail beschreven, en worden de resultaten besproken.
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.

@@ -7,45 +7,126 @@
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
 
-Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+Deze literatuurstudie analyseert welke neurale netwerken geschikt zijn voor het voorspellen van de populariteit van POI's op basis van censusdata. De studie legt de nadruk op drie types neurale netwerken, namelijk multi-layer perceptrons (MLP), recurrent neural networks (RNN) en transformers, waarbij verschillende methoden voor hyperparameter optimalisatie worden besproken om de prestaties van neurale netwerken te optimaliseren.
 
-Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
+\section{Definitie POI-populariteit}
+Er bestaan verschillende methoden om de populariteit van een POI te bepalen. In deze studie wordt POI populariteit gedefinieerd als het aantal personen dat zich binnen de vooraf gedefinieerde grenzen van een POI bevindt gedurende een dag. 
 
-\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
+De afbakening van een POI wordt vastgelegd door het geografische gebied dat de locatie vertegenwoordigt te bepalen. Deze grenzen worden op verschillende manieren afgebakend afhankelijk van hoe de initiële data is opgehaald. Accurat hanteert twee methoden om POI data te verzamelen. De eerste methode bestaat uit bedrijfsdata via websites te verzamelen door middel van web scraping. Deze techniek levert POI data zonder grenzen aan, waardoor een handmatige afbakening vereist is. Dit gebeurt door polygonen te tekenen die het gebied van de POI definiëren. Hierbij wordt gebruikgemaakt van satellietbeelden in Google Maps en beschikbare plattegronden om deze zo nauwkeurig mogelijk af te bakenen. De tweede methode waarop Accurat POI data afhaalt is door gebruik te maken van OpenStreet Maps (OSM). Hierbij is de vorm van de POI expliciet aanwezig, waardoor de grenzen niet handmatig afgebakend moeten worden.
 
-Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
+De meting van de populariteit van een POI gebeurt op basis van anonieme locatiegegevens die worden verzameld via applicaties waarvoor gebruikers expliciet locatietoestemming hebben verleend. Deze meetmethode kent echter enkele beperkingen. Ten eerste wordt enkel de locatie bijgehouden van gebruikers die toestemming hebben gegeven waardoor niet alle bezoekers worden meegenomen in de meting. Dit kan leiden tot een onderschatting van het werkelijke aantal bezoekers. Ten tweede kunnen onnauwkeurigheden ontstaan bij het afbakenen van de grenzen van een POI. Indien de grenzen te ruim worden vastgesteld, kan dit resulteren in een overschatting van de bezoekersaantallen, terwijl een te strikte afbakening kan leiden tot een onderschatting.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{grail.jpg}
-  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
-\end{figure}
+\section{POI-populariteit en censusdata}
 
-\begin{listing}
-  \begin{minted}{python}
-    import pandas as pd
-    import seaborn as sns
+Volgens \textcite{Mrkic2020} zijn censusdata gegevens waarbij de overheid op een vast moment informatie over alle inwoners van een land verzamelt op het kleinste geografische niveau (statistische sectoren). Deze gegevens omvatten demografische, sociale en economische variabelen over de bevolking zoals leeftijd, populatie, opleiding en inkomen. Op deze manier kan de overheid de bevolking van een land beschrijven.
+De populariteit van een POI kan verklaard worden aan de hand van censusdata. \textcite{Juhasz2020} tonen aan dat bevolkingsdichtheid een cruciale factor is in het verklaren van bezoekersaantallen. De kans dat personen zich in de nabijheid van een specifieke locatie bevinden stijgt naarmate de bevolkingsdichtheid toeneemt. Dit betekent dat er meer voetverkeer zal zijn op locaties waar de bevolkingsdichtheid hoger is dan op locaties waar deze dichtheid lager is. Daarnaast speelt ook werkgelegenheid dichtheid een belangrijke rol. Gebieden met een hoge werkgelegenheidsdichtheid trekken een groter aantal personen aan, aangezien inwoners en pendelaars zich naar deze locaties verplaatsen voor werk. Dit resulteert in een hoger aantal bezoekers voor een POI.
 
-    penguins = sns.load_dataset('penguins')
-    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
-  \end{minted}
-  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
-\end{listing}
+\section{Neurale netwerken}
+Om de populariteit van een POI te voorspellen is het relevant om drie geschikte modellen te vergelijken, namelijk Multi-Layer Perceptron (MLP), Recurrent Neural Network (RNN) en transformers. Deze drie modellen gebruiken verschillende methodes om de doelvariabele te voorspellen waarbij elk model voor- en nadelen hebben.
 
-\lipsum[7-20]
+\subsection{Multi-Layer Perceptron}
+Het eerste model dat wordt besproken is MLP. Volgens onderzoek \autocite{Duan2025} is een MLP eenvoudiger te ontwikkelen dan complexere modellen zoals RNN en transformers. Een MLP is een feedforward neuraal netwerk dat bestaat uit een inputlaag, 1 of meerdere verborgen lagen en een outputlaag. Alle neuronen in opeenvolgende lagen zijn met elkaar verbonden via gewichten.
+Het model ontvangt een vector als input die alle features representeert waarmee een voorspelling wordt gemaakt. Vervolgens wordt deze input door de verschillende lagen van het netwerk gestuurd. In elke laag wordt de input vermenigvuldigd met gewichten en opgeteld bij een bias. Vervolgens wordt een activatiefunctie, bijvoorbeeld Rectified Linear Unit (ReLU), hyperbolic tangent (tanh) en softplus toegepast op basis van de aard van het probleem. Activatiefuncties introduceren niet-lineariteit in het model, waardoor complexe patronen in de data kunnen worden gemodelleerd.
 
-\begin{table}
-  \centering
-  \begin{tabular}{lcr}
-    \toprule
-    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
-    $\alpha$         & $\beta$          & $\gamma$         \\
-    \midrule
-    A                & 10.230           & a                \\
-    B                & 45.678           & b                \\
-    C                & 99.987           & c                \\
-    \bottomrule
-  \end{tabular}
-  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
-\end{table}
+De activatiefunctie tanh zet een inputwaarde om naar een output tussen -1 en 1. Doordat de output rond nul gecentreerd is, helpt tanh om de activaties van een netwerk stabieler te houden, vooral bij sequentiële modellen zoals RNN. Een nadeel van tanh is dat bij zeer grote of zeer kleine inputs de afgeleide van de functie bijna nul wordt. Dit kan leiden tot het vanishing gradient probleem. Tijdens backpropagation worden de afgeleiden die bepalen hoe de gewichten veranderen (gradients) steeds kleiner naarmate ze door de lagen van het netwerk teruggaan. De gradients kunnen bijna nul worden, waardoor voorafgaande lagen nauwelijks iets leren. De uitkomst van de tanh activatiefunctie wordt bepaald door de volgende formule:
+\[ tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}} \]
 
+ReLU zet negatieve waarden op nul en laat positieve waarden onveranderd, waardoor neuronen alleen actief worden bij positieve waarden. De uitkomst van een ReLU bewerking ligt dus altijd tussen nul en oneindig. De output kan snel berekend worden waardoor diepe netwerken efficiënt getraind kunnen worden. Daarnaast helpt ReLU om het vanishing gradient probleem op te lossen. Een nadeel is dat neuronen dood kunnen raken wanneer hun input altijd negatief is waardoor ze geen bijdrage meer leveren aan het leren van het netwerk. De uitkomst van de ReLU activatiefunctie wordt bepaald door de volgende formule:
+\[ ReLU(x) = \max(0, x) \]
+
+Aan de andere kant kan er ook softplus gebruikt worden. Softplus kan gezien worden als een gladdere variant van ReLU. Softplus zet positieve input om in een output tussen nul en oneindig, maar verloopt vloeiender dan ReLU. Voor positieve waarden ligt de uitkomst dicht bij de inputwaarde, terwijl negatieve waarden langzaam nul benaderen. Dit maakt softplus volledig differentieerbaar en voorkomt dode neuronen zoals bij ReLU. Het nadeel is dat softplus trager te berekenen is dan ReLU. Softplus kan gebruikt worden in de verborgen lagen als een gladdere activatie verkozen wordt en soms in de outputlaag wanneer de voorspelde waarden altijd positief moeten zijn. De uitkomst van de softplus activatiefunctie wordt bepaald door de volgende formule:
+\[ softplus(x) = \ln(1 + e^x) \]
+Verder vertelt \textcite{Mienye2024} dat tijdens het trainingsproces de model parameters geoptimaliseerd worden door middel van backpropagation. Hierbij wordt het verschil tussen de voorspelde en werkelijke waarden berekend aan de hand van een loss function. Loss functies berekenen hoe verkeerd de voorspelling is van het model ten opzichte van de echte waarden. Voor regressieproblemen, zoals het voorspellen van POI-populariteit, worden vaak loss functions zoals mean absolute error (MAE), mean squared error (MSE) en de Huber loss gebruikt.
+MAE berekent het gemiddelde van de absolute verschillen tussen de voorspelde en werkelijke waarden. MAE geeft dus de gemiddelde afwijking van de voorspellingen, zonder rekening te houden met de richting van de fout.
+
+MSE wordt gedefinieerd als het gemiddelde van de gekwadrateerde fouten. Eerst worden de verschillen tussen de voorspelde en de werkelijke waarden berekend. Vervolgens worden deze fouten gekwadrateerd waarna het gemiddelde wordt genomen. Doordat de fouten gekwadrateerd worden, wegen grotere afwijkingen in de voorspellingen zwaarder mee dan kleine fouten. Hierdoor is MSE gevoelig voor outliers in voorspellingen ten opzichte van MAE.
+
+Huber loss combineert eigenschappen van MAE en MSE. Voor kleine afwijkingen gedraagt de Huber loss zich zoals MSE, terwijl het zich als MAE gedraagt voor grotere afwijkingen. Op deze manier wordt een balans bereikt tussen robuustheid tegen outliers en een stabiele training van het model.
+Op basis van deze berekende afwijkingen worden de gewichten van het model aangepast met behulp van optimization functies zoals stochastic gradient descent \autocite{Tian2023} en adaptive moment estimation (Adam) \autocite{Yang2024}.
+Een belangrijk voordeel van MLP is de relatief eenvoudige architectuur in vergelijking met modellen zoals transformers, waardoor het model goed kan presteren bij een beperkte dataset en eenvoudig te implementeren is. Een belangrijk nadeel is echter dat het model geen expliciet mechanisme bevat om verbanden doorheen de tijd vast te stellen \autocite{Kim2025}. MLP behandelt elke input als een afzonderlijk punt in de data in plaats van een volgend punt in een tijdreeks. Hierdoor bestaat de mogelijkheid dat trends die zich over de tijd ontwikkelen niet worden ontdekt.
+
+\subsection{Recurrent Neural Network}
+In tegenstelling tot MLP-modellen zijn RNN's in staat om tijdsafhankelijke verbanden in data te modelleren. Volgens \textcite{Song2024} houden RNN’s rekening met de volgorde van de input door de gegenereerde output opnieuw te gebruiken als input voor de volgende voorspelling in de tijdreeks. Dit is een mechanisme staat bekend als de hidden state. Het model ontvangt bij elke stap niet alleen de huidige input, maar ook de hidden state van de vorige tijdstap. Op basis van deze combinatie wordt een nieuwe hidden state en een bijbehorende output berekend. Op deze manier kan het RNN patronen modelleren die afhankelijk zijn van de volgorde van de data.
+Verder voegt \textcite{Sherstinsky2018} toe dat tijdens het trainingsproces gebruik wordt gemaakt van backpropagation through time (BPTT). Hierbij wordt het netwerk uitgerold over meerdere tijdstappen en worden de gewichten geoptimaliseerd op basis van de fouten die over de volledige sequentie worden berekend. Dit stelt het model in staat om trends en afhankelijkheden in tijdreeksen te leren. In de context van censusdata betekent dit dat een RNN evoluties in variabelen zoals bevolkingsdichtheid, werkgelegenheid dichtheid en leeftijdsverdeling over de tijd kan modelleren.
+Een belangrijk nadeel van RNN’s betreft het vanishing gradient probleem waarbij de invloed van oudere informatie tijdens het trainingsproces geleidelijk afneemt. Hierdoor wordt het moeilijk om langetermijnafhankelijkheden vast te stellen, waardoor patronen die zich over langere tijdsperiodes ontwikkelen mogelijk niet worden vastgesteld.
+
+\subsection{Transformers}
+Tot slot komt ook het transformer model aan bod. Volgens de oorspronkelijke studie \autocite{Vaswani2017} waarin transformers geïntroduceerd zijn, maakt dit model gebruik van een mechanische genaamd self-attention. In tegenstelling tot het RNN verwerken transformers de volledige inputsequentie gelijktijdig.
+Binnen dit mechanisme wordt voor elk datapunt in de sequentie bepaald in welke mate andere datapunten relevant zijn. Dit gebeurt aan de hand van queries, keys en values. queries specificeren waarnaar gezocht wordt, keys beschrijven wat elk datapunt te bieden heeft, en values bevatten de informatie die uiteindelijk wordt gebruikt. Het model beoordeelt de mate waarin de queries bij de keys passen om de relevantie van de verschillende gegevens te bepalen. Vervolgens combineert de transformer deze informatie, waarbij belangrijkere gegevens zwaarder doorwegen om een nieuwe representatie van het datapunt te vormen.
+Verder stelt \textcite{Islam2023} dat transformers gebruikmaken van parallellisme waardoor ze in staat zijn om grote hoeveelheden data efficiënt te verwerken. Aangezien de transformer architectuur geen informatie bevat over de volgorde van de sequentie, worden positionele encodings toegevoegd om de volgorde van de sequentie te behouden. Hierdoor kunnen zowel korte- als langetermijnafhankelijkheden in de data worden gemodelleerd.
+Een belangrijk nadeel van transformers is de relatief complexe architectuur in vergelijking met modellen zoals MLP en RNN. Als gevolg kunnen de prestaties van een transformer model significant afnemen bij een beperkte dataset.
+
+\section{Hyperparameter tuning}
+Een standaard neuraal netwerk is vaak onvoldoende om de populariteit van een POI nauwkeurig mee te voorspellen. Ondernemingen kunnen gerichtere strategische beslissingen nemen met betrekking tot locatie- en aankoopkeuze naarmate de voorspellingsfouten afnemen. Om de prestaties van een model te optimaliseren, kunnen verschillende optimalisatietechnieken worden toegepast.
+Volgens \textcite{Yang2020} spelen hyperparameters een cruciale rol in de performantie van neurale netwerken. Hyperparameters zijn instellingen die voor het trainingsproces worden vastgelegd en een significante invloed hebben op de model prestaties. Een belangrijk probleem is echter dat er geen analytische methode bestaat om de optimale hyperparameter combinatie vooraf te bepalen. Hierdoor is het essentieel om meerdere hyperparameter combinaties te evalueren. Dit proces is echter tijdsintensief zonder garantie op een optimale hyperparameter configuratie. De hyperparameters die het meest frequent worden geoptimaliseerd zijn de learning rate, het aantal lagen in een neuraal netwerk, het aantal neuronen per laag, de batch size, dropout rate en type activatiefunctie.
+Om dit probleem aan te pakken, wordt in deze studie gebruikgemaakt van hyperparameter tuning. Hierbij worden meerdere configuraties van hyperparameters geëvalueerd. Aan het einde van het trainingsproces selecteert het model de combinatie die de beste prestatie levert op de validatie dataset. Deze aanpak resulteert in een significante verbetering van de model nauwkeurigheid.
+
+\subsection{Bayesian optimization}
+De eerste hyperparameter tuning techniek die in deze studie wordt toegepast is Bayesian optimization. Volgens \textcite{Kotthoff2021} bevat deze methode een surrogaatmodel dat de relatie tussen hyperparameters en model prestaties leert, bijvoorbeeld gaussian process of random forest. Dit model voorspelt de verwachte prestaties van nieuwe hyperparameter combinaties en geeft de onzekerheid van deze voorspelling.
+
+Bayesian Optimization start met het trainen van een aantal willekeurige hyperparameter configuraties. Op deze manier worden voldoende initiële gegevens verzameld om het surrogaatmodel mee te trainen. Het aantal initiële configuraties waar het surrogaatmodel mee traint wordt voor het trainingsproces bepaald op basis van een vooraf gedefinieerde parameter.
+
+Vervolgens gebruikt bayesian optimization dit surrogaatmodel om te bepalen welke hyperparameter combinaties het interessantst is om als volgende te evalueren. Deze keuze gebeurt aan de hand van een acquisitie functie. Deze functie is een beslissingsstrategie die op basis van de voorspellingen en onzekerheden van het surrogaatmodel bepaalt welke hyperparameter combinatie geëvalueerd zal worden, bijvoorbeeld expected improvement of maximum uncertainty. De acquisitie functie zoekt een balans tussen gebieden waar het surrogaatmodel voorspelt dat het neurale netwerk goed zal presteren (exploitation) en gebieden waar het surrogaatmodel onzeker is dat de configuratie goed zal presteren, maar mogelijk een betere oplossing verborgen ligt (exploration).
+
+Bayesian optimization selecteert de configuraties die volgens de acquisitie functie de beste combinatie tussen potentieel hoge prestaties en waardevolle nieuwe informatie biedt om de meest optimale hyperparameter combinatie te vinden. De geselecteerde configuratie wordt getraind en geëvalueerd. Het resultaat van deze training wordt toegevoegd aan de dataset, waarmee het surrogaatmodel wordt bijgewerkt. Op deze manier wordt het surrogaatmodel nauwkeuriger bij het vinden van performante hyperparameter combinaties. Dit proces herhaalt zich tot de optimale hyperparameter configuraties geïdentificeerd zijn of het maximale aantal model trainingen bereikt zijn.
+
+\subsection{hyperband}
+De tweede hyperparameter tuning-techniek die in deze studie wordt toegepast, is Hyperband. Volgens \textcite{Li2016} is hyperband een techniek waarbij slecht presterende hyperparameter configuraties vroeg tijdens het trainen herkenbaar zijn. Hierdoor is het inefficiënt om elk model volledig uit te trainen voordat er beslist wordt welke hyperparameter combinaties optimaal zijn. Eerst traint hyperband veel configuraties met een klein aantal epochs, waarbij slecht presterende modellen vroegtijdig stoppen met trainen en goed presterende modellen extra epochs ontvangen om mee te trainen. De methode begint met het willekeurig genereren van een groot aantal hyperparameter configuraties. Elke configuratie krijgt een kleine hoeveelheid resources toegewezen in de vorm van epochs. 
+Na het trainen van elk model op deze beperkte aantal epochs beschikt hyperband over een indicatie van de uiteindelijke prestaties van de modellen. Vervolgens gebruikt Hyperband een techniek genaamd successive halving. Elke hyperparameter combinatie wordt geëvalueerd, waarbij de minst performante hyperparameter configuraties worden verwijderd volgens een halveringsfactor en de best presterende modellen verder worden getraind. Deze modellen trainen verder met een verhoogd aantal epochs dat berekend wordt door het huidige aantal epochs te vermenigvuldigen met de halveringsfactor. Bij een halveringsfactor van twee betekent dit dat na elke ronde slechts de helft van de modellen overblijft, terwijl het aantal epochs per model verdubbelt. Dit proces herhaalt zich tot de optimale hyperparameter configuraties geïdentificeerd zijn.
+Volgens \textcite{Li2016} heeft successive halving als nadeel dat er een keuze gemaakt moet worden tussen twee strategieën. Er kunnen een groot aantal hyperparameter configuraties met een beperkt hoeveelheid epochs getraind worden, resulterend in een uitgebreide verkenning van de zoekruimte (exploratie) of er kunnen minder configuraties met een groot aantal epochs getraind worden, waardoor de performantie van elk model grondig geëvalueerd wordt (exploitatie). Deze twee methoden zijn echter suboptimaal wanneer ze individueel worden toegepast. Hyperband pakt dit probleem aan door meerdere varianten van successive halving uit te voeren in de vorm van brackets. Bepaalde brackets starten met een groot aantal configuraties die een beperkt aantal resources ontvangen, terwijl andere brackets beginnen met minder configuraties die een groot aantal resources ontvangen. Op deze manier vindt hyperband een balans tussen de exploratie en exploitatie van verschillende hyperparameter combinaties.
+Voor het trainingsproces begint, worden twee cruciale parameters ingesteld, namelijk de maximale hoeveelheid resources in epochs ($R$) en de halveringsfactor ($\eta$). Aan de hand van deze parameters kunnen het aantal brackets berekend worden door:
+\[ s_{\max}=\left\lfloor\log_{\eta}(R)\right\rfloor \]
+Vervolgens wordt het totale budget dat Hyperband per bracket gebruikt, berekend met de formule:
+\[ B=(s_{\max}+1)R \]
+Verder berekent hyperband de initiële aantal epochs waarmee de modellen in de eerste ronde trainen aan de hand van de volgende formule:
+
+\[ r=R\eta^{-s} \]
+
+Tot slot worden de aantal modellen die in de eerste ronde getraind worden bepaald door:
+
+\[ n=\left\lceil \frac{B}{R}\frac{\eta^s}{s+1} \right\rceil \]
+
+\subsection{Grid search en random search}
+Aan de andere kant worden technieken zoals grid search en random search niet in deze studie toegepast. Random search selecteert willekeurige combinaties van hyperparameters uit een vooraf gedefinieerde zoekruimte, terwijl grid search alle hyperparameter combinaties binnen deze zoekruimte evalueert. Hoewel deze methoden eenvoudig te implementeren en intuïtief te begrijpen zijn, brengen ze significante beperkingen met zich mee. Volgens \textcite{Kee2025} zijn deze technieken minder efficiënt en effectief in het identificeren van optimale hyperparameter configuraties in vergelijking met geavanceerdere methoden zoals Bayesian Optimization en Hyperband. Hoewel deze technieken grondiger zijn, neemt de rekentijd sterk toe naarmate het aantal hyperparameters in de zoekruimte groeit. In de praktijk zal een grote zoekruimte van hyperparameters gedefinieerd worden om de kans op een optimale hyperparameter configuratie te vergroten. Als gevolg worden methoden zoals grid search en random search snel tijdsintensief. Geavanceerdere technieken zoals Bayesian optimization en Hyperband bieden daarom een betere balans tussen zoek efficiëntie en model prestaties.
+
+%Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+
+%Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
+
+%\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
+
+%Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
+
+%\begin{figure}
+%  \centering
+%  \includegraphics[width=0.8\textwidth]{grail.jpg}
+%  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
+%\end{figure}
+
+%\begin{listing}
+%  \begin{minted}{python}
+%    import pandas as pd
+%    import seaborn as sns
+
+%    penguins = sns.load_dataset('penguins')
+%    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
+%  \end{minted}
+%  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
+%\end{listing}
+
+%\lipsum[7-20]
+
+%\begin{table}
+%  \centering
+%  \begin{tabular}{lcr}
+%    \toprule
+%    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
+%    $\alpha$         & $\beta$          & $\gamma$         \\
+%    \midrule
+%    A                & 10.230           & a                \\
+%    B                & 45.678           & b                \\
+%    C                & 99.987           & c                \\
+%    \bottomrule
+%  \end{tabular}
+%  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
+%\end{table}
