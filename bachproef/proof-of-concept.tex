@@ -29,8 +29,18 @@ Daarnaast is gecontroleerd of de polygonen die bepalen of een bezoeker zich binn
 
 Verder is rekening gehouden met de kwaliteit van polygonen. In sommige gevallen kan een polygoon automatisch genereren door middel van OSM. Hierbij ontstaat de kans dat de polygoon onnauwkeurig de oppervlakte van de POI representeert, wat resulteert in skewed bezoekersaantallen. Indien dit wordt vastgesteld, past Accurat de polygoon handmatig aan. Wanneer een POI wordt aangepast, komt er een record in de database te staan die aangeeft wanneer deze wijziging is toegebracht aan die specifieke POI. Alle POI’s waarbij de wijziging na 1 januari 2025 heeft plaatsgevonden, zijn uit de dataset gefilterd. Dit garandeert dat de geregistreerde bezoekersaantallen representatief en consistent blijven. Wanneer de vorm van een polygoon verandert, kunnen de bezoekersaantallen significant afwijken van de periode voor de wijziging. Door deze filters toe te passen, worden alleen consistente en betrouwbare POIs in de dataset behouden.
 
+\section{Data preprocessing}
+
+Na de data filtering bestaat de uiteindelijke dataset uit 122 verschillende POI’s waarbij de bezoekersaantallen van 1 januari 2025 tot 31 maart 2026 zijn gebruikt. In totaal omvat de dataset 55510 records. Voor het trainen van de neurale netwerken werd de dataset opgesplitst in een trainingsset, validatieset en testset. Hierbij werd 70\% van de data gebruikt voor training, 15\% voor validatie en 15\% voor testing. De test dataset bevat 55022 normale dagen en 488 feestdagen die mogelijks invloed kunnen hebben op de bezoekersaantallen van een POI.
+
+De chronologische volgorde van de data is behouden tijdens het opsplitsen van de dataset, aangezien RNN’s en transformers sequentiële modellen zijn. Daarnaast zijn de tijdreeksen van elke POI afzonderlijk gehouden voor de sequentiële modellen. Dit betekent dat de tijdreeksen van verschillende POI’s niet met elkaar gecombineerd of achter elkaar geplakt worden. Op deze manier worden onnatuurlijke overgangen vermeden.
+
+Vervolgens zijn scaling en encoding toegepast om de dataset geschikt te maken om modellen mee te trainen. Alle numerieke features zijn geschaald met StandardScaler. \textcite{Amorim2022} vertelt dat de features worden herschaald zodat ze een gemiddelde van 0 en een standaardafwijking van 1 hebben. Dit is belangrijk omdat modellen slecht omgaan met features die sterk in grootte verschillen. Zonder scaling kunnen grote waarden de training domineren. Dit zorgt voor een tragere en minder stabiele training.
+
+Verder zijn de categorische variabelen omgezet naar one-hot encoded features. Volgens \textcite{JIS2024} zorgt one-hot encoding dat het model elke categorie als een aparte feature behandelt zonder dat het model een hiërarchie in de data aanneemt. Deze methode is toegepast omdat modellen enkel numerieke features kunnen interpreteren.
+
 \section{Hyperparameter tuning}
-Tijdens het trainen van de neurale netwerken zijn twee technieken voor hyperparameter tuning ingezet. Bij Bayesian optimization en Hyperband zijn telkens dezelfde zoekruimtes gedefinieerd om te ondervinden welke hyperparameter tuning techniek het meest effectief is om de beste hyperparameters te vinden op de gegeven dataset. \\
+Tijdens het trainen van de neurale netwerken zijn twee technieken voor hyperparameter tuning ingezet. Bij bayesian optimization en hyperband zijn telkens dezelfde zoekruimtes gedefinieerd om te ondervinden welke hyperparameter tuning techniek het meest effectief is om de beste hyperparameters te vinden op de gegeven dataset. \\
 
 RNN en MLP:
 
@@ -40,6 +50,14 @@ RNN en MLP:
     \item Activatiefunctie: relu, softplus, tanh
     \item Learning rate: 0.00001, 0.0001, 0.001, 0.01
 \end{itemize}
+
+Het aantal lagen geeft aan hoeveel verborgen lagen het neurale netwerk bevat. Volgens \textcite{Seidi2025} bestaat het risico op underfitting wanneer een model te weinig lagen bevat. Hierdoor blijft het model te eenvoudig waardoor het model complexe patronen niet goed kan modelleren. Bij te veel lagen neemt het risico op overfitting toe en maakt het de training tijdsintensiever.
+
+Het aantal neuronen bepaalt hoeveel neuronen per laag aanwezig zijn. Verder vertelt \textcite{Seidi2025} dat een hoger aantal neuronen de capaciteit van het model vergroot, maar leidt tot meer parameters. Dit verhoogt het risico op overfitting en leidt tot een lange trainingstijd, terwijl een lager aantal neuronen resulteert in underfitting.
+
+De activatiefunctie beslist hoe de output van een neuron wordt getransformeerd en doorgegeven aan de volgende laag. Dit is essentieel om niet-lineariteit in het model te introduceren waardoor het model complexe patronen in de data kan modelleren \autocite{Gustineli2022}.
+
+De learning rate is een van de belangrijkste hyperparameters bij het trainen van neurale netwerken. Volgens \textcite{Wu2019} bepaalt de learning rate hoe groot de aanpassingen van de gewichten zijn tijdens het trainingsproces. Een hoge learning rate kan leiden tot het overschietten van de optimale parameters, terwijl een lage learning rate het trainingsproces kan vertragen.
 
 Transformer:
 
@@ -51,7 +69,13 @@ Transformer:
     \item Learning rate: 0.00001, 0.0001, 0.001, 0.01
 \end{itemize}
 
-\subsection{Python-omgeving en gebruikte bibliotheken}
+\textcite{Salehin2023} vertellen dat de dropout rate een regularisatietechniek is die overfitting aanpakt. Tijdens de training wordt een bepaald percentage van de neuronen willekeurig op nul gezet. Dit voorkomt dat het model te sterk afhankelijk wordt van specifieke neuronen. Een hogere dropout rate zorgt voor sterkere regularisatie, maar kan bij hoge waarden underfitting veroorzaken.
+
+Het aantal heads verwijst naar het aantal attention heads in het multi-head self-attention mechanisme. \textcite{Cordonnier2020} stelt dat een groot aantal heads het model toelaat om een groot aantal relaties in de data gelijktijdig te modelleren, maar dit kan ook leiden tot een groter aantal parameters en een langere trainingstijd.
+
+Tot slot bepaalt de feedforward dimensie de grootte van de verborgen laag in het feedforward netwerk. Onderzoek \autocite{Pires2023} toont aan dat de feedforward dimensie een belangrijke factor is in het totale aantal parameters van het model. Een grotere dimensie verhoogt de complexiteit, maar vergroot ook het risico op overfitting.
+
+\section{Python-omgeving en gebruikte bibliotheken}
 
 Voor de POC is gebruik gemaakt van \textbf{Python 3.10.11}. 
 
@@ -170,6 +194,36 @@ Hoewel de prestaties van de Transformers ook beter is op middelange termijn, nem
 Op lange termijn neemt de performantie van de RNN en Transformer verder af, maar de Transformer blijft beter presteren dan de RNN. De Transformer behaalt een MAE van 106,47 en een RMSE van 147,03 in tegenstelling tot de RNN met een MAE van 113,82 en een RMSE van 154,89. Tot slot ligt de R² van de Transformer hoger met een 0.55 in tegenstelling tot tot de RNN met een R² van 0.51
 
 Op basis van deze resultaten wordt geconcludeerd dat de Transformer het meest geschikte neurale netwerk is voor het voorspellen van de populariteit van een POI. De Transformer presteert  het beste op zowel de reguliere als uitzonderlijke dagen waarbij de MAE en RMSE lager liggen.
+
+\section{Baseline modellen}
+
+Naast de neurale netwerken zijn ook baseline modellen geëvalueerd om de prestaties van de modellen beter te kunnen interpreteren en om een meerwaarde aan te tonen voor het gebruik van neurale netwerken. Op deze manier wordt onderzocht in welke mate de neurale netwerken beter patronen kunnen modelleren dan klassieke machine learning technieken.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & MAE & RMSE & R² \\ \hline
+        Naïve & 148,5 & 195,2 & 0,32  \\ \hline
+        XGBoost & 124,0  & 169,8 & 0,45  \\ \hline
+        MLP (best) & 123,96  & 169,46 & 0,47 \\ \hline
+        RNN (best) & 112,77  & 153,34 & 0,52  \\ \hline
+        Transformer (best) & 105,12  & 144,56 & 0,55  \\ \hline
+    \end{tabular}
+    \caption{Prestaties van baseline modellen}
+\end{table}
+
+\subsection{Naïve voorspelling}
+
+Een naïeve voorspelling is de eenvoudigste baseline die gebruikt wordt in de proof of concept. Deze techniek voorspelt het aantal bezoekers voor een bepaalde dag door de bezoekersaantallen van 28 dagen geleden over te nemen. Op deze manier worden wekelijkse patronen behouden. De naïeve voorspellingen bereiken een MAE van 148,5, een RMSE van 195,2 en een R² van 0,32. Deze relatief zwakke prestaties tonen aan dat er een meerwaarde is in het gebruik van complexere machine learning modellen. Enkel vertrouwen op historische bezoekersaantallen zonder rekening te houden met censusdata is onvoldoende om nauwkeurige voorspellingen te maken.
+
+\subsection{XGBoost}
+
+Vervolgens is een XGBoost gebruikt. Het XGBoost model behaalt een MAE van 124,0, een RMSE van 169,8 en een R² van 0,45. De prestaties van XGBoost liggen dicht bij de prestaties van het beste MLP model. Dit bevestigt dat klassieke machine learning modellen een verbetering bieden ten opzichte van naïeve voorspellingen. Tegelijkertijd tonen de resultaten van RNN en transformer aan dat neurale netwerken een meerwaarde bieden aan het voorspellen van bezoekersaantallen. De ingebouwde mechanismen om tijdsafhankelijke relaties te modelleren zorgen voor significant betere voorspellingen.
+
+\subsection{Conclusie}
+
+De resultaten van de baseline modellen tonen aan dat de neurale netwerken betere prestaties leveren. De RNN’s en transformers zijn beter in staat om temporele patronen te modelleren. Dit toont aan dat neurale netwerken een meerwaarde bieden aan het voorspellen van de populariteit van een POI, in het specifiek leveren sequentiële modellen een grote meerwaarde dankzij de ingebouwde mechanische om tijdsafhankelijke relaties te modelleren.
 
 \section{Beperkingen}
 De neurale netwerken bevatten enkele beperkingen. De modellen presteren minder goed bij uitzonderlijke situaties die niet goed vertegenwoordigd zijn in de trainingsdata. Verder wordt het moeilijker om de bezoekersaantallen van POI’s met lage bezoekersaantallen nauwkeuriger te voorspellen aangezien een kleine afwijking bij een hoog bezoekersaantal minder impactvol is dan een kleine afwijking bij een laag bezoekersaantal. Verder blijven de neurale netwerken black-box modellen waardoor het moeilijk is om afwijkingen in de voorspellingen te verklaren. Daarnaast zijn de modellen gevoelig voor een gebrek aan historische data. De neurale netwerken leren correlaties tussen de features en de voorspelde waarde. Hierdoor worden relaties die niet in de features worden verwerkt, mogelijk niet door het model ontdekt.
